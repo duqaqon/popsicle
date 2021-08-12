@@ -1,6 +1,6 @@
 use super::View;
 use crate::fl;
-use gtk::*;
+use gtk::{prelude::*, *};
 
 pub struct FlashView {
     pub view: View,
