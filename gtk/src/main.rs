@@ -45,5 +45,8 @@ fn main() {
         }
     }
 
+    let main_context = glib::MainContext::default();
+    let _acquire_guard = main_context.acquire().unwrap();
+
     app.connect_events().then_execute();
 }
