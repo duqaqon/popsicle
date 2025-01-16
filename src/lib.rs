@@ -30,7 +30,7 @@ use std::{
 use usb_disk_probe::stream::UsbDiskProbe;
 
 #[derive(Debug, Error)]
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 pub enum ImageError {
     #[error("image could not be opened: {}", why)]
     Open { why: io::Error },
@@ -45,7 +45,7 @@ pub enum ImageError {
 }
 
 #[derive(Debug, Error)]
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 pub enum DiskError {
     #[error("failed to fetch devices from USB device stream: {}", _0)]
     DeviceStream(anyhow::Error),
@@ -90,7 +90,7 @@ pub async fn usb_disk_devices(disks: &mut Vec<Box<Path>>) -> anyhow::Result<()> 
 
     while let Some(device_result) = stream.next().await {
         match device_result {
-            Ok(disk) => disks.push(disk),
+            Ok(disk) => disks.push(PathBuf::from(&*disk).into_boxed_path()),
             Err(why) => {
                 eprintln!("failed to reach device path: {}", why);
             }

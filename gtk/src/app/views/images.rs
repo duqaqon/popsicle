@@ -56,6 +56,7 @@ impl ImageView {
         let hash = cascade! {
             ComboBoxText::new();
             ..append_text(&fl!("none"));
+            ..append_text("SHA512");
             ..append_text("SHA256");
             ..append_text("SHA1");
             ..append_text("MD5");
@@ -82,10 +83,8 @@ impl ImageView {
         let hash_label_clone = hash_label.clone();
         let check_clone = check.clone();
         hash.connect_changed(move |combo_box| {
-            let sensitive = match combo_box.active_text() {
-                Some(text) if text.as_str() != "None" => true,
-                _ => false,
-            };
+            let sensitive = combo_box.active_text().is_some_and(|text| text.as_str() != "None");
+
             hash_label_clone.set_sensitive(sensitive);
             check_clone.set_sensitive(sensitive);
         });
@@ -135,9 +134,9 @@ impl ImageView {
         let text = self.hash_label.text();
         if !text.is_empty() {
             let fg = if text.eq_ignore_ascii_case(hash) {
-                AttrColor::new_foreground(0, std::u16::MAX, 0)
+                AttrColor::new_foreground(0, u16::MAX, 0)
             } else {
-                AttrColor::new_foreground(std::u16::MAX, 0, 0)
+                AttrColor::new_foreground(u16::MAX, 0, 0)
             };
             let attrs = AttrList::new();
             attrs.insert(fg);

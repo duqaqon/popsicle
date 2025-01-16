@@ -2,12 +2,13 @@ use futures_codec::{BytesMut, Decoder};
 use memchr::memchr;
 use serde::{Deserialize, Serialize};
 use std::{io, path::PathBuf};
+use thiserror::Error;
 
 /// Errors that may occur when decoding the IPC stream.
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("failed to decode popsicle message: {{\n  {}\n}}", input)]
-    Decode { input: Box<str>, source: ron::de::Error },
+    Decode { input: Box<str>, source: ron::de::SpannedError },
     #[error("reading from popsicle stream failed")]
     Read(#[from] io::Error),
 }

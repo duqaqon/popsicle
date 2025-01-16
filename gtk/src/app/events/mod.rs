@@ -6,17 +6,20 @@ use dbus_udisks2::{DiskDevice, Disks, UDisks2};
 use md5::Md5;
 use sha1::Sha1;
 use sha2::Sha256;
+use sha2::Sha512;
 use std::collections::HashMap;
 use std::io;
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
 
+pub type FlashResult = anyhow::Result<(anyhow::Result<()>, Vec<Result<(), FlashError>>)>;
+
 pub enum UiEvent {
     SetImageLabel(PathBuf),
     RefreshDevices(Box<[Arc<DiskDevice>]>),
     SetHash(io::Result<String>),
-    Flash(JoinHandle<anyhow::Result<(anyhow::Result<()>, Vec<Result<(), FlashError>>)>>),
+    Flash(JoinHandle<FlashResult>),
     Reset,
 }
 
@@ -46,6 +49,7 @@ pub fn background_thread(events_tx: Sender<UiEvent>, events_rx: Receiver<Backgro
                         "MD5" => hasher::<Md5>(&path),
                         "SHA256" => hasher::<Sha256>(&path),
                         "SHA1" => hasher::<Sha1>(&path),
+                        "SHA512" => hasher::<Sha512>(&path),
                         _ => Err(io::Error::new(
                             io::ErrorKind::InvalidInput,
                             "hash kind not supported",
